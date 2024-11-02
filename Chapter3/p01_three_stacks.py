@@ -1,0 +1,1 @@
+#https://darealnormanlee.wordpress.com/2014/06/21/using-a-single-array-to-implement-three-stacks-in-python/
