@@ -1,5 +1,3 @@
-# https://leetcode.com/problems/course-schedule/?envType=problem-list-v2&envId=topological-sort
-
 from collections import defaultdict
 
 
@@ -8,6 +6,7 @@ class Solution(object):
         self.WHITE = 0
         self.GREY = 1
         self.BLACK = 2
+        self.is_no_cycle = True
 
     def canFinish(self, numCourses, prerequisites):
         """
@@ -15,27 +14,28 @@ class Solution(object):
         :type prerequisites: List[List[int]]
         :rtype: bool
         """
-        adj_list = defaultdict(list)
-        for dst, src in prerequisites:
-            adj_list[src].append(dst)
         color = [self.WHITE] * numCourses
+        dic = defaultdict(list)
+        for dst, src in prerequisites:
+            dic[src].append(dst)
 
-        def dfs(node):
-            if color[node] == self.GREY:
-                return False
-            if color[node] == self.BLACK:
-                return True
-            # visit the node
-            color[node] = self.GREY
-            if node in adj_list:
-                for neighbor in adj_list[node]:
-                    if not dfs(neighbor):
-                        return False
-            color[node] = self.BLACK
-            return True
+        def dfs(vertex):
+            if not self.is_no_cycle:
+                return
+            color[vertex] = self.GREY
 
-        for i in range(numCourses):
-            if not dfs(i):
-                return False
-        return True
+            if vertex in dic:
+                for node in dic[vertex]:
+                    if color[node] == self.WHITE:
+                        dfs(node)
+                    if color[node] == self.GREY:
+                        self.is_no_cycle = False
+            # end of recursion
+            color[vertex] = self.BLACK
+            # topological_order.append(vertex)
+
+        for node in range(numCourses):
+            if color[node] == self.WHITE:
+                dfs(node)
+        return self.is_no_cycle
         # Time and space complexity O(m+n) m is # edges and n is #nodes
